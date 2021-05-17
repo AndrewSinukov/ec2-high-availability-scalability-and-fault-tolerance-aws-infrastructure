@@ -1,0 +1,9 @@
+## Terraform:
+/.terraform
+.terraform.lock.hcl
+.terraform.*
+terraform.tfstate*
+.fuse_hidden*
+
+## Idea
+.idea

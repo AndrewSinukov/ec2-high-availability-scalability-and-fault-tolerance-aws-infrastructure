@@ -1,0 +1,37 @@
+stages:
+  - Plan
+  - Apply
+  - Destroy
+
+default:
+  tags:
+    - onboarding-andrew
+
+Terraform Plan:
+  stage: Plan
+  script:
+    - terraform init -backend=false
+    - terraform validate
+    - terraform fmt -check
+    - terraform plan -input=false -out=tfplan
+  artifacts:
+    paths:
+      - tfplan
+    expire_in: 1 week
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master" || $CI_COMMIT_BRANCH == "master"'
+
+Terraform Apply:
+  stage: Apply
+  script:
+    - terraform apply tfplan -auto-approve
+  rules:
+    - if: '$CI_COMMIT_BRANCH  == "master"'
+
+Terraform Destroy:
+  stage: Destroy
+  script:
+    - terraform destroy -auto-approve
+  rules:
+    - if: '$CI_COMMIT_BRANCH  == "master"'
+      when: manual
